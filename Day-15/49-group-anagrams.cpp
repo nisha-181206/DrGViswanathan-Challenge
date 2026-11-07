@@ -1,44 +1,29 @@
 class Solution {
 public:
-    vector<int> topKFrequent(vector<int>& nums, int k) {
+    vector<vector<string>> groupAnagrams(vector<string>& strs) {
 
-        // Step 1: Count frequencies using the given value range
-        array<int, 20001> freq{};
+        unordered_map<string, vector<string>> mp;
+        mp.reserve(strs.size());
 
-        for (int num : nums) {
-            freq[num + 10000]++;
-        }
+        for (const string& s : strs) {
 
-        // Step 2: Store unique elements with their frequencies
-        vector<pair<int, int>> elements;
-        elements.reserve(20001);
+            // Count lowercase character frequencies
+            string key(26, '\0');
 
-        for (int i = 0; i <= 20000; i++) {
-
-            if (freq[i] > 0) {
-                elements.push_back({freq[i], i - 10000});
+            for (char c : s) {
+                key[c - 'a']++;
             }
+
+            // Group strings having the same frequency
+            mp[key].push_back(s);
         }
 
-        // Step 3: Select the k highest-frequency elements
-        if (k < elements.size()) {
+        // Collect the anagram groups
+        vector<vector<string>> ans;
+        ans.reserve(mp.size());
 
-            nth_element(
-                elements.begin(),
-                elements.begin() + k,
-                elements.end(),
-                [](const auto& a, const auto& b) {
-                    return a.first > b.first;
-                }
-            );
-        }
-
-        // Step 4: Construct the answer
-        vector<int> ans;
-        ans.reserve(k);
-
-        for (int i = 0; i < k; i++) {
-            ans.push_back(elements[i].second);
+        for (auto& it : mp) {
+            ans.push_back(move(it.second));
         }
 
         return ans;
